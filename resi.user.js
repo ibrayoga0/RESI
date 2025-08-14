@@ -1,13 +1,17 @@
 // ==UserScript==
 // @name         RESI
+// @name:en      RESI
 // @namespace    http://tampermonkey.net/
-// @version      2025-08-14
+// @version      2025-08-15
 // @description  Bersih-bersih jejak kaki lu JGRP
+// @description:en The script will automatically reset your traces on JGRP
 // @author       ibraheem
 // @match        https://jogjagamers.org/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=jogjagamers.org
 // @grant        none
+// @license      MIT
 // ==/UserScript==
+/* jshint esversion: 8 */
 
 (function() {
     'use strict';
@@ -34,7 +38,6 @@
     toggleBtn.onmouseover = () => { toggleBtn.style.opacity = '1'; };
     toggleBtn.onmouseout = () => { toggleBtn.style.opacity = '0.8'; };
 
-    // Tombol Reset (awal disembunyikan)
     const resetBtn = document.createElement('button');
     resetBtn.innerText = 'Reset';
     resetBtn.style.position = 'fixed';
@@ -53,7 +56,6 @@
     resetBtn.style.pointerEvents = 'none';
     resetBtn.style.transition = 'opacity 0.3s';
 
-    // Fungsi show/hide tombol reset
     let visible = false;
     toggleBtn.addEventListener('click', () => {
         visible = !visible;
@@ -66,21 +68,18 @@
         }
     });
 
-    // Fungsi hapus semua data
     resetBtn.addEventListener('click', async () => {
         if (confirm('Reset semua data situs ini?')) {
-            // Hapus semua cookie domain ini
+
             document.cookie.split(";").forEach(cookie => {
                 const eqPos = cookie.indexOf("=");
                 const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
                 document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
             });
 
-            // Hapus localStorage & sessionStorage
             localStorage.clear();
             sessionStorage.clear();
 
-            // Hapus IndexedDB
             if (window.indexedDB) {
                 const dbs = await indexedDB.databases();
                 dbs.forEach(db => {
@@ -88,12 +87,10 @@
                 });
             }
 
-            // Reload halaman
             location.reload(true);
         }
     });
 
-    // Masukkan tombol ke halaman
     document.body.appendChild(toggleBtn);
     document.body.appendChild(resetBtn);
 })();
